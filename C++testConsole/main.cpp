@@ -9,7 +9,7 @@ std::cout << "hey" << std::endl;
 }
 int main (int argc, char *argv[])
 {
-	std::cout << "Hello world!" << std::endl;
+	std::cout << "Hello world! V2" << std::endl;
 	boost::thread threadone(&thread_function);
 	threadone.join();
 	return 0;
