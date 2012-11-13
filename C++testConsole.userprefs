@@ -2,14 +2,12 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="C++testConsole/main.cpp">
     <Files>
-      <File FileName="C++testConsole/main.cpp" Line="1" Column="35" />
+      <File FileName="C++testConsole/main.cpp" Line="2" Column="10" />
       <File FileName="../../../usr/include/boost/thread/detail/thread.hpp" Line="205" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="C++testConsole" expanded="True" selected="True" />
-        </State>
+        <State selected="True" />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
