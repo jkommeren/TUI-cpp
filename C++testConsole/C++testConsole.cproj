@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -22,15 +22,23 @@
     <OutputName>C++testConsole</OutputName>
     <Includes>
       <Includes>
+        <Include>/usr/local/include</Include>
         <Include>/usr/include</Include>
       </Includes>
     </Includes>
     <LibPaths>
       <LibPaths>
+        <LibPath>/usr/local/lib</LibPath>
         <LibPath>/usr/lib</LibPath>
       </LibPaths>
     </LibPaths>
-    <ExtraLinkerArguments>-lboost_thread</ExtraLinkerArguments>
+    <ExtraCompilerArguments>`pkg-config --cflags opencv`</ExtraCompilerArguments>
+    <EnvironmentVariables>
+      <EnvironmentVariables>
+        <Variable name="LD_LIBRARY_PATH" value="/usr/local/lib" />
+      </EnvironmentVariables>
+    </EnvironmentVariables>
+    <ExtraLinkerArguments>`pkg-config --libs opencv` -lboost_thread</ExtraLinkerArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release</OutputPath>
@@ -44,4 +52,19 @@
   <ItemGroup>
     <Compile Include="main.cpp" />
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="../Makefile" BuildTargetName="" CleanTargetName="" IsAutotoolsProject="true" RelativeConfigureInPath=".">
+          <BuildFilesVar />
+          <DeployFilesVar />
+          <ResourcesVar />
+          <OthersVar />
+          <GacRefVar />
+          <AsmRefVar />
+          <ProjectRefVar />
+        </MonoDevelop.Autotools.MakefileInfo>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
