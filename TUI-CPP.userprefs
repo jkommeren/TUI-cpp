@@ -2,13 +2,15 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="C++testConsole/main.cpp">
     <Files>
-      <File FileName="C++testConsole/main.cpp" Line="16" Column="2" />
-      <File FileName="../../../usr/include/boost/thread/detail/thread.hpp" Line="205" Column="1" />
+      <File FileName="C++testConsole/main.cpp" Line="54" Column="10" />
+      <File FileName="../../../usr/include/boost/thread/detail/thread.hpp" Line="19" Column="15" />
+      <File FileName="../../../home/joris/Downloads/emgucv/Emgu.CV.Example/TUI/IdentifiedObject.cs" Line="1" Column="1" />
+      <File FileName="../../../home/joris/Downloads/emgucv/Emgu.CV.Example/TUI/Program.cs" Line="21" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="C++testConsole" expanded="True" selected="True" />
+          <Node name="TUI-CPP" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>
@@ -19,7 +21,7 @@
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="../../../home/joris/Downloads/emgucv/Emgu.CV.Example/HelloWorld/Program.cs" line="97" offsetX="538" offsetY="1590" expression="currentContour" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
-  <MonoDevelop.Ide.ItemProperties.C_22B_22BtestConsole>
+  <MonoDevelop.Ide.ItemProperties.TUI-CPP>
     <MonoDevelop.Ide.CustomExecutionModes>
       <Data Name="Default (Custom 2)" Id="11e0209b-a077-4604-9906-2578beb0ea02" ModeId="Default">
         <CommandData>
@@ -33,5 +35,5 @@
         </CommandData>
       </Data>
     </MonoDevelop.Ide.CustomExecutionModes>
-  </MonoDevelop.Ide.ItemProperties.C_22B_22BtestConsole>
+  </MonoDevelop.Ide.ItemProperties.TUI-CPP>
 </Properties>
