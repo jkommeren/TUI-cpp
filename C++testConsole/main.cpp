@@ -18,9 +18,10 @@ int yfCirc = 0;
 cvNamedWindow("Animation"); 
 IplImage* frameX;
 CvPoint circleCenter;
+frameX = cvCreateImage(cvSize(200,200),8,3);
 while (true) {
 usleep(20000);
-frameX = cvCreateImage(cvSize(200,200),8,3);
+
 if (!backwards) {
 xfCirc = xfCirc + 1.0;
 yfCirc = yfCirc + 1.0;
@@ -31,9 +32,11 @@ yfCirc -= 1.0;
 }
 if (xfCirc > 190) {
 backwards = true;
+frameX = cvCreateImage(cvSize(200,200),8,3);
 } else if (xfCirc < 10) {
 // reached the top!;
 backwards = false;
+frameX = cvCreateImage(cvSize(200,200),8,3);
 }
 
 circleCenter = cvPoint( xfCirc, yfCirc );
