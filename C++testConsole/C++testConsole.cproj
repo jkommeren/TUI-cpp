@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -32,7 +32,7 @@
         <LibPath>/usr/lib</LibPath>
       </LibPaths>
     </LibPaths>
-    <ExtraCompilerArguments>`pkg-config --cflags opencv`</ExtraCompilerArguments>
+    <ExtraCompilerArguments>`pkg-config --cflags opencv` -pedantic -std=c++0x</ExtraCompilerArguments>
     <EnvironmentVariables>
       <EnvironmentVariables>
         <Variable name="LD_LIBRARY_PATH" value="/usr/local/lib" />

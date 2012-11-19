@@ -14,9 +14,10 @@ bool backwards = false;
 int xfCirc = 0;
 int yfCirc = 0;
 cvNamedWindow("Animation"); 
+IplImage* frameX;
 while (true) {
 usleep(20000);
-IplImage* frameX = cvCreateImage(cvSize(200,200),8,3);
+frameX = cvCreateImage(cvSize(200,200),8,3);
 if (!backwards) {
 xfCirc = xfCirc + 1.0;
 yfCirc = yfCirc + 1.0;
@@ -47,7 +48,7 @@ void StartCapture()
 //cvNamedWindow("result"); 
 try {
 	// warning: the catch thingy doesn't work
-capture = cvCaptureFromCAM(1); 
+capture = cvCaptureFromCAM(0); 
 }
 catch (std::exception& excpt) {
  fprintf(stderr, "Cannot open initialize webcam!\n"); 
