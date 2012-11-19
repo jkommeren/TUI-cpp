@@ -51,7 +51,9 @@ void StartCapture()
 //cvNamedWindow("result"); 
 try {
 	// warning: the catch thingy doesn't work
-capture = cvCaptureFromCAM(0); 
+	// video 1 == device 11.10
+	
+capture = cvCaptureFromCAM(1); 
 }
 catch (std::exception& excpt) {
  fprintf(stderr, "Cannot open initialize webcam!\n"); 
