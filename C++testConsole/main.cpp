@@ -1,4 +1,5 @@
 #include <boost/thread/thread.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <iostream>
 #include <stdio.h> 
 #include <cv.h> 
@@ -8,6 +9,7 @@
 ////using namespace std;
 //
 //
+//typedef  seqX;
 void SecondThread()
 {
 bool backwards = false;
@@ -15,6 +17,7 @@ int xfCirc = 0;
 int yfCirc = 0;
 cvNamedWindow("Animation"); 
 IplImage* frameX;
+CvPoint circleCenter;
 while (true) {
 usleep(20000);
 frameX = cvCreateImage(cvSize(200,200),8,3);
@@ -33,7 +36,7 @@ backwards = true;
 backwards = false;
 }
 
-CvPoint circleCenter = cvPoint( xfCirc, yfCirc );
+circleCenter = cvPoint( xfCirc, yfCirc );
 cvCircle(frameX, circleCenter, 20,cvScalar(255,255,255));
 cvShowImage ("Animation", frameX);
 cvWaitKey (1);
@@ -61,31 +64,42 @@ catch (std::exception& excpt) {
 std::vector<CvSeq*> DetectObjects (CvMemStorage* storage,  IplImage* frame_thresh, double ContourAccuracy, double minAreaSize, double maxAreaSize)
 {
 CvSeq* contour = 0;
-CvSeq* currentContour = 0;
+
 std::vector<CvSeq*> objects;
-objects.clear();
+ // = NULL;
+//objects.clear();
+//return objects;
 cvFindContours( frame_thresh, storage, &contour, sizeof(CvContour),CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
+
 int counter = 0;
            
   for( ; contour != 0; contour = contour->h_next )
+
         {
-        	currentContour = cvApproxPoly(contour,sizeof(CvContour) ,storage, CV_POLY_APPROX_DP,cvArcLength(contour) * ContourAccuracy,0);
+	        //*objects.begin();
+        	CvSeq* currentContour = cvApproxPoly(contour,sizeof(CvContour) ,storage, CV_POLY_APPROX_DP,cvArcLength(contour) * ContourAccuracy,0);
           	double contourArea = cvContourArea(currentContour);
           	
           	if (contourArea > minAreaSize && contourArea < maxAreaSize)
           	{
           	counter ++;
-          	objects.insert(objects.begin(), currentContour);
-            	
+          	//CvSeq* ptr = currentContour;
+          	objects.insert(objects.end(),currentContour);
+            	//objects.insert(currentContou
+           // objects.push_back(*currentContour);
+            	//break;
+            	//objects.insert(currentContour);
             	}
         } 
  std::cout << counter << std::endl;
+ //return objects;
  return objects;
  }
  
- void ProcessFrame ()
+ void ProcessFrame (
+	 CvMemStorage* storage)
  {
- IplImage *frame = 0; 
+ IplImage *frame = NULL; 
  //IplImage *frame_gray = NULL;
  IplImage *frame_HSV = NULL;
  IplImage *frame_thresh = NULL;
@@ -96,7 +110,6 @@ int counter = 0;
  double ContourAccuracy = 0.0005;
  double minAreaSize =  2000;
  double maxAreaSize = 20000;
- CvMemStorage* storage = cvCreateMemStorage(0);
  
  cvGrabFrame(capture);
  try {
@@ -114,13 +127,17 @@ frame_thresh = cvCreateImage(cvGetSize(frame),8,1);
 cvCvtColor(frame, frame_HSV, CV_BGR2HSV);
 // range in HSV colors
 cvInRangeS(frame_HSV,cvScalar(20,20,100), cvScalar(30,255,255), frame_thresh);
-std::vector<CvSeq*> unidentifiedObjects = DetectObjects(storage, frame_thresh, ContourAccuracy,  minAreaSize, maxAreaSize);
+
+std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, ContourAccuracy,  minAreaSize, maxAreaSize);
 cvShowImage("current",frame_thresh);
 int key = cvWaitKey(1);
 int counter2 = 0;
+//for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
 for (CvSeq* seq : unidentifiedObjects)
 {
 counter2++;
+//delete seq;
+//seq = NULL;
 }
 if (counter2 > 0)
 {
@@ -128,22 +145,23 @@ if (counter2 > 0)
  }
  cvReleaseImage(&frame_thresh);
   cvReleaseImage(&frame_HSV);
-  //delete storage;
-  //cvReleaseImage(&frame);
-unidentifiedObjects.clear();
-  cvClearMemStorage(storage);
+unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end());
+ 
   //cvDestroyWindow("current");
 }
 
- 
  
  int main(int argc, char **argv) 
  {
  boost::thread t2(&SecondThread);
  StartCapture();
+ 
+	 CvMemStorage* storage = cvCreateMemStorage(0);
  while (true)
  {
- ProcessFrame();
+ 
+	 ProcessFrame(storage);
+	  cvClearMemStorage(storage);
  }
    cvReleaseCapture(&capture); 
  return 0;

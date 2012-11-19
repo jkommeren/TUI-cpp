@@ -18,7 +18,6 @@
     <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
     <CompileTarget>Bin</CompileTarget>
-    <Externalconsole>true</Externalconsole>
     <OutputName>C++testConsole</OutputName>
     <Includes>
       <Includes>
