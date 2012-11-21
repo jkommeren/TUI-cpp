@@ -11,6 +11,13 @@
 //
 //
 //typedef  seqX;
+class identifiedObject
+{
+	
+};
+
+
+
 void SecondThread()
 {
 bool backwards = false;
@@ -161,18 +168,16 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
  int main(int argc, char **argv) 
  {
 	 // check for argument
-	  int i = -1;
-	  while ( i + 1 != argc)
+	  int i = 0;
+	  if ( i != argc)
 	  {
-		  std::cout << argv[i + 1] << std::endl;
-	  if (argv[i + 1] = "-zero")
-	  {
+		  std::cout << argv[i] << std::endl;
+	 
 		  std::cout << "arg found!" << std::endl;
-		  captureNo = 0;
-		  break;
+		  captureNo = atoi(argv[i]);
 	  }
-	  i++;
- }
+	
+ 
 
  boost::thread t2(&SecondThread);
  StartCapture();
