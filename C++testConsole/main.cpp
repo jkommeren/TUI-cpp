@@ -57,10 +57,14 @@ void SecondThread()
 bool backwards = false;
 int xfCirc = 0;
 int yfCirc = 0;
+int width = 800;
+int height = 480;
 cvNamedWindow("Animation"); 
 IplImage* frameX;
+IplImage* blank;
 CvPoint circleCenter;
-frameX = cvCreateImage(cvSize(200,200),8,3);
+blank = cvCreateImage(cvSize(width,height),8,3);
+frameX =  cvCloneImage(blank);
 while (true) {
 usleep(20000);
 
@@ -74,11 +78,11 @@ yfCirc -= 1.0;
 }
 if (xfCirc > 190) {
 backwards = true;
-frameX = cvCreateImage(cvSize(200,200),8,3);
+frameX = cvCloneImage(blank);
 } else if (xfCirc < 10) {
 // reached the top!;
 backwards = false;
-frameX = cvCreateImage(cvSize(200,200),8,3);
+frameX = cvCloneImage(blank);
 }
 
 circleCenter = cvPoint( xfCirc, yfCirc );
