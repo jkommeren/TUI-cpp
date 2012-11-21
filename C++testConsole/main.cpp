@@ -11,9 +11,42 @@
 //
 //
 //typedef  seqX;
-class identifiedObject
+class IdentifiedObject
 {
+	int _x, _y;
+	double  _size;
+	bool _circle, _square, _border;
+	// add orientation here for Module 5
+	// add lastSeen for Module 3
+	// struct timeval tim;
+	// gettimeofday(&tim, NULL);
+	 // double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
 	
+	public:
+	IdentifiedObject() {
+		_x = _y = _size = 0;
+		_circle, _square, _border = false;
+	}
+	IdentifiedObject(const int x, const int y, const double size, bool isCircle, bool isSquare, bool isBorder) {
+		_x = x;
+		_y = y;
+		_size = size;
+		_circle = isCircle;
+		_square = isSquare;
+		_border = isBorder;
+	}
+	~IdentifiedObject() { }
+	void updatePosition(const int x, const int y)
+	{
+		_x = x;
+		_y = y;
+	}
+	std::string getShape()
+	{
+		if (_circle) return "circle";
+		if (_square) return "square";
+		if (_border) return "border";
+	}
 };
 
 
@@ -73,6 +106,30 @@ catch (std::exception& excpt) {
  }
  
  
+ }
+ 
+IdentifiedObject IdentifyObject (CvSeq* detectedObject)
+ {
+	 bool isCircle,isSquare,isBorder = false;
+	 CvRect boundingRect = cvBoundingRect(detectedObject);
+	 // two options; cvMinAreaRect && ...2 . The second one requires only the points and storage as input, but returns
+	 // a cvbox2d
+	 double boundingRectArea = double(boundingRect.width * boundingRect.height);
+	CvBox2D minBox = cvMinAreaRect2(detectedObject);
+	//CvRect minBoxRect = CvRect(minBox.size);
+	CvSize2D32f minBoxSquare = minBox.size;
+	CvRect minBoxRect = cvRect(0,0,int(minBoxSquare.width),int(minBoxSquare.height));
+	double minBoxArea = double(minBoxRect.width * minBoxRect.height);
+	CvPoint2D32f center = minBox.center;
+	int centerX = int(center.x + 0.5);
+	int centerY = int(center.y + 0.5);
+	
+	if (minBoxArea > 1.05 * boundingRectArea)
+	{
+		isSquare = true;
+	}
+	IdentifiedObject object = IdentifiedObject(centerX,centerY,minBoxArea,isCircle,isSquare,isBorder);
+	return object;
  }
  
 std::vector<CvSeq*> DetectObjects (CvMemStorage* storage,  IplImage* frame_thresh, double ContourAccuracy, double minAreaSize, double maxAreaSize)
@@ -149,14 +206,20 @@ int counter2 = 0;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
 for (CvSeq* seq : unidentifiedObjects)
 {
-counter2++;
+	IdentifiedObject x = IdentifyObject(seq);
+	std::cout << counter2;
+	std::cout << "object " + counter2 +x.getShape()<< std::endl;
+	counter2++;
 //delete seq;
 //seq = NULL;
 }
-if (counter2 > 0)
-{
- //std::cout << counter2 << std::endl;
- }
+
+//if (counter2 > 0)
+//{
+// //std::cout << counter2 << std::endl;
+// }
+ 
+ 
  cvReleaseImage(&frame_thresh);
   cvReleaseImage(&frame_HSV);
 unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end());
@@ -169,16 +232,14 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
  {
 	 // check for argument
 	  int i = 0;
-	  if ( i != argc)
+	  if ( argc != 1)
 	  {
-		  std::cout << argv[i] << std::endl;
-	 
+		 
+	 	 std::cout << argv[1] << std::endl;
 		  std::cout << "arg found!" << std::endl;
-		  captureNo = atoi(argv[i]);
+		  captureNo = atoi(argv[1]);
 	  }
-	
- 
-
+	  
  boost::thread t2(&SecondThread);
  StartCapture();
  
