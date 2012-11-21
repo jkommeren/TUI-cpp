@@ -43,9 +43,10 @@ class IdentifiedObject
 	}
 	std::string getShape()
 	{
-		if (_circle) return "circle";
-		if (_square) return "square";
-		if (_border) return "border";
+		if (_circle == true) return "circle";
+		else if (_square ==true ) return "square";
+		else if (_border == true) return "border";
+		else {return "different kind of object";}
 	}
 };
 
@@ -133,7 +134,8 @@ catch (std::exception& excpt) {
  
 IdentifiedObject IdentifyObject (CvSeq* detectedObject)
  {
-	 bool isCircle,isSquare,isBorder = false;
+	 bool isCircle,isSquare,isBorder;
+	 isCircle = isSquare = isBorder = false;
 	 CvRect boundingRect = cvBoundingRect(detectedObject);
 	 // two options; cvMinAreaRect && ...2 . The second one requires only the points and storage as input, but returns
 	 // a cvbox2d
@@ -151,6 +153,18 @@ IdentifiedObject IdentifyObject (CvSeq* detectedObject)
 	{
 		isSquare = true;
 	}
+	
+	else {
+		double ratio = double(minBoxSquare.height / minBoxSquare.width);
+		if (ratio > 0.95 && ratio < 1.05)
+	{
+		//std::cout << ratio;
+		isCircle = true;
+	}
+	}
+
+	
+	
 	IdentifiedObject object = IdentifiedObject(centerX,centerY,minBoxArea,isCircle,isSquare,isBorder);
 	return object;
  }
@@ -229,15 +243,20 @@ int counter2 = 0;
 for (CvSeq* seq : unidentifiedObjects)
 {
 	IdentifiedObject x = IdentifyObject(seq);
-	std::cout << counter2;
-	std::cout << "object " + counter2 +x.getShape()<< std::endl;
+//	std::cout << "I'm thinking object ";
+//	std::cout << counter2;
+//	std::cout << " is a " + x.getShape()<< std::endl;
+	CvScalar col; 
+	if (x.getShape() == "square")col = cvScalar(255,0,0);
+	else if (x.getShape() == "circle") col = cvScalar(0,255,0);
+	else { col = cvScalar(255,255,255);}
 	counter2++;
-	cvDrawContours(frame_thresh,seq,cvScalar(255,255,255),cvScalar(1,1,1 ),10);
+	cvDrawContours(frame,seq,col,cvScalar(1,1,1 ),10);
 //delete seq;
 //seq = NULL;
 }
 
-cvShowImage("current",frame_thresh);
+cvShowImage("current",frame);
 cvCreateTrackbar("hue", "current", &posH, 10, hueChanged);
 cvCreateTrackbar("saturation", "current", &posS, 10, satChanged);
 cvCreateTrackbar("value", "current", &posV, 10, valChanged);
@@ -286,6 +305,7 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
 		 framecounter ++;
 	 }
 	 else {
+		 // reset counter and calc the time 30 frames took to process (=framerate)
 		 framecounter = 0;
 		 gettimeofday(&tim, NULL);
 		double curtime = tim.tv_sec+(tim.tv_usec/1000000.0);
