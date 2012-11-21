@@ -257,9 +257,9 @@ for (CvSeq* seq : unidentifiedObjects)
 }
 
 cvShowImage("current",frame);
-cvCreateTrackbar("hue", "current", &posH, 10, hueChanged);
-cvCreateTrackbar("saturation", "current", &posS, 10, satChanged);
-cvCreateTrackbar("value", "current", &posV, 10, valChanged);
+cvCreateTrackbar("hue", "current", &posH, 100, hueChanged);
+cvCreateTrackbar("saturation", "current", &posS, 100, satChanged);
+cvCreateTrackbar("value", "current", &posV, 100, valChanged);
 int key = cvWaitKey(1);
 
 //if (counter2 > 0)
