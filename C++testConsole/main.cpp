@@ -2,11 +2,11 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <iostream>
+#include <stdlib.h>
 #include <stdio.h> 
 #include <cv.h> 
 #include <highgui.h> 
 #include <sys/time.h>
-
 ////using namespace std;
 //
 //
@@ -91,6 +91,29 @@ cvWaitKey (1);
  
 CvCapture *capture = 0; 
 int captureNo = 1;
+int pos = 0;
+int posH = 0;
+int posS = 0;
+int posV = 0;
+int percHue =0;
+int percSat =0;
+int percVal =0;
+void hueChanged(int id)
+{
+	id;
+	percHue = posH;
+}
+void satChanged(int id)
+{
+	id;
+	percSat = posS;
+}
+void valChanged(int id)
+{
+	id;
+	percVal = posV;
+}
+
 void StartCapture()
 {
 //cvNamedWindow("result"); 
@@ -197,11 +220,10 @@ frame_HSV = cvCreateImage(cvGetSize(frame),8,3);
 frame_thresh = cvCreateImage(cvGetSize(frame),8,1);
 cvCvtColor(frame, frame_HSV, CV_BGR2HSV);
 // range in HSV colors
-cvInRangeS(frame_HSV,cvScalar(20,20,100), cvScalar(30,255,255), frame_thresh);
+cvInRangeS(frame_HSV,cvScalar(percHue * 2.5,percSat * 2.5,percVal*3.5), cvScalar(255,255,350), frame_thresh);
 
 std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, ContourAccuracy,  minAreaSize, maxAreaSize);
-cvShowImage("current",frame_thresh);
-int key = cvWaitKey(1);
+
 int counter2 = 0;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
 for (CvSeq* seq : unidentifiedObjects)
@@ -210,9 +232,16 @@ for (CvSeq* seq : unidentifiedObjects)
 	std::cout << counter2;
 	std::cout << "object " + counter2 +x.getShape()<< std::endl;
 	counter2++;
+	cvDrawContours(frame_thresh,seq,cvScalar(255,255,255),cvScalar(1,1,1 ),10);
 //delete seq;
 //seq = NULL;
 }
+
+cvShowImage("current",frame_thresh);
+cvCreateTrackbar("hue", "current", &posH, 10, hueChanged);
+cvCreateTrackbar("saturation", "current", &posS, 10, satChanged);
+cvCreateTrackbar("value", "current", &posV, 10, valChanged);
+int key = cvWaitKey(1);
 
 //if (counter2 > 0)
 //{
