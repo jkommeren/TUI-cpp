@@ -38,6 +38,7 @@
       </EnvironmentVariables>
     </EnvironmentVariables>
     <ExtraLinkerArguments>`pkg-config --libs opencv` -lboost_thread</ExtraLinkerArguments>
+    <Commandlineparameters>-zero</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release</OutputPath>

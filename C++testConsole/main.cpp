@@ -50,6 +50,7 @@ cvWaitKey (1);
 }
  
 CvCapture *capture = 0; 
+int captureNo = 1;
 void StartCapture()
 {
 //cvNamedWindow("result"); 
@@ -57,7 +58,7 @@ try {
 	// warning: the catch thingy doesn't work
 	// video 1 == device 11.10
 	
-capture = cvCaptureFromCAM(1); 
+capture = cvCaptureFromCAM(captureNo); 
 }
 catch (std::exception& excpt) {
  fprintf(stderr, "Cannot open initialize webcam!\n"); 
@@ -159,10 +160,20 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
  
  int main(int argc, char **argv) 
  {
-	 if (argc != NULL)
-	 {
+	 // check for argument
+	  int i = -1;
+	  while ( i + 1 != argc)
+	  {
+		  std::cout << argv[i + 1] << std::endl;
+	  if (argv[i + 1] = "-zero")
+	  {
 		  std::cout << "arg found!" << std::endl;
-	 }
+		  captureNo = 0;
+		  break;
+	  }
+	  i++;
+ }
+
  boost::thread t2(&SecondThread);
  StartCapture();
  
