@@ -1,10 +1,11 @@
 #include <boost/thread/thread.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <iostream>
 #include <stdio.h> 
 #include <cv.h> 
 #include <highgui.h> 
-#include<sys/time.h>
+#include <sys/time.h>
 
 ////using namespace std;
 //
@@ -96,7 +97,7 @@ int counter = 0;
             	//objects.insert(currentContour);
             	}
         } 
- std::cout << counter << std::endl;
+ //std::cout << counter << std::endl;
  //return objects;
  return objects;
  }
@@ -146,7 +147,7 @@ counter2++;
 }
 if (counter2 > 0)
 {
- std::cout << counter2 << std::endl;
+ //std::cout << counter2 << std::endl;
  }
  cvReleaseImage(&frame_thresh);
   cvReleaseImage(&frame_HSV);
@@ -158,15 +159,37 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
  
  int main(int argc, char **argv) 
  {
+	 if (argc != NULL)
+	 {
+		  std::cout << "arg found!" << std::endl;
+	 }
  boost::thread t2(&SecondThread);
  StartCapture();
  
 	 CvMemStorage* storage = cvCreateMemStorage(0);
+	 int framecounter = 0;
+	  struct timeval tim;
+	  gettimeofday(&tim, NULL);
+	  double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
+	 
  while (true)
  {
- 
+	
+	 if (framecounter < 30)
+	 {
+		 framecounter ++;
+	 }
+	 else {
+		 framecounter = 0;
+		 gettimeofday(&tim, NULL);
+		double curtime = tim.tv_sec+(tim.tv_usec/1000000.0);
+		double framerate = 30 / ((curtime-lasttime));
+		std::string framestring = boost::lexical_cast<std::string>(framerate);
+		std::cout << "framerate:"+framestring << std::endl;
+		lasttime = curtime;
+	 }
 	 ProcessFrame(storage);
-	  cvClearMemStorage(storage);
+	 cvClearMemStorage(storage);
  }
    cvReleaseCapture(&capture); 
  return 0;
