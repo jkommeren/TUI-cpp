@@ -53,8 +53,8 @@ void SecondThread()
 bool backwards = false;
 int xfCirc = 0;
 int yfCirc = 0;
-int width = 800;
-int height = 480;
+int width = 200;
+int height = 200;
 cvNamedWindow("Animation"); 
 IplImage* frameX;
 IplImage* blank;
