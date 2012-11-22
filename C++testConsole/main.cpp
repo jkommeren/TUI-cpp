@@ -279,14 +279,14 @@ if (showWindow) {
 cvShowImage("current",frame);
 
 }
-cvCreateTrackbar("min Hue", "sliders", &hue, 255, 0);
-cvCreateTrackbar("max Hue", "sliders", &maxHue, 255, 0);
-cvCreateTrackbar("min Saturation", "sliders", &sat, 255, 0);
-cvCreateTrackbar("max Saturation", "sliders", &maxSat, 255, 0);
-cvCreateTrackbar("min Value", "sliders", &val, 255, 0);
-cvCreateTrackbar("max Value", "sliders", &maxVal, 255, 0);
-cvCreateTrackbar("min Object Size", "sliders", &minAreaSize, 2000, 0);
-cvCreateTrackbar("max Object Size", "sliders", &maxAreaSize, 50000, 0);
+cvCreateTrackbar("min Hue", "current", &hue, 255, 0);
+cvCreateTrackbar("max Hue", "current", &maxHue, 255, 0);
+cvCreateTrackbar("min Saturation", "current", &sat, 255, 0);
+cvCreateTrackbar("max Saturation", "current", &maxSat, 255, 0);
+cvCreateTrackbar("min Value", "current", &val, 255, 0);
+cvCreateTrackbar("max Value", "current", &maxVal, 255, 0);
+cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, 0);
+cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, 0);
 int key = cvWaitKey(1);
 
 //if (counter2 > 0)
@@ -323,7 +323,7 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
 	  struct timeval tim;
 	  gettimeofday(&tim, NULL);
 	  double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
-	 cvNamedWindow("sliders"); 
+	// cvNamedWindow("current"); 
  while (true)
  {
 	
