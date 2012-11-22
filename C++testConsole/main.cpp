@@ -299,6 +299,7 @@ for (CvSeq* seq : unidentifiedObjects)
 //delete seq;
 //seq = NULL;
 }
+cvRectangle(frame, cvPoint(projectionArea.x,projectionArea.y), cvPoint(projectionArea.x + projectionArea.width, projectionArea.y + projectionArea.height),cvScalar(1,255,255));
 
 if (showWindow) {
 cvShowImage("current",frame);
