@@ -65,8 +65,32 @@ IplImage* blank;
 CvPoint circleCenter;
 blank = cvCreateImage(cvSize(width,height),8,3);
 frameX =  cvCloneImage(blank);
+struct timeval tim;
+gettimeofday(&tim, NULL);
+int animcounter = 0;
+double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
+int sleepamount = 20000;
 while (true) {
-usleep(20000);
+animcounter ++;
+usleep(sleepamount);
+if (animcounter > 50)
+{
+	animcounter = 0;
+	gettimeofday(&tim, NULL);
+	double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
+	std::cout << "animation framerate: ";
+	double animFramerate = 50 / (curtime - lasttime);
+	std::cout << animFramerate << std::endl;
+	lasttime = curtime;
+	if (animFramerate < 45)
+	{
+		if (sleepamount > 1000) sleepamount = sleepamount - 1000;
+		else std::cout << "cant get to 50Hz, sorry!";
+	}
+	
+}
+
+
 
 if (!backwards) {
 xfCirc = xfCirc + 1.0;
