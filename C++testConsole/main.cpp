@@ -50,6 +50,7 @@ class IdentifiedObject
 bool showWindow = true;
 void SecondThread()
 {
+	sleep(10);
 bool backwards = false;
 int xfCirc = 0;
 int yfCirc = 0;
