@@ -57,7 +57,7 @@ cvNamedWindow("Animation");
 IplImage* frameX;
 IplImage* blank;
 CvPoint circleCenter;
-blank = cvCreateImage(cvSize(width,height),8,3);
+blank = cvCreateImage(cvSize(width,height),8,1);
 frameX =  cvCloneImage(blank);
 struct timeval tim;
 gettimeofday(&tim, NULL);
@@ -104,7 +104,7 @@ frameX = cvCloneImage(blank);
 }
 
 circleCenter = cvPoint( xfCirc, yfCirc );
-cvCircle(frameX, circleCenter, 20,cvScalar(255,255,255));
+cvCircle(frameX, circleCenter, 20,cvScalar(255));
 cvShowImage ("Animation", frameX);
 cvWaitKey (1);
 //cvDestroyWindow("Animation");
