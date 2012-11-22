@@ -7,10 +7,6 @@
 #include <cv.h> 
 #include <highgui.h> 
 #include <sys/time.h>
-////using namespace std;
-//
-//
-//typedef  seqX;
 class IdentifiedObject
 {
 	int _x, _y;
@@ -49,8 +45,6 @@ class IdentifiedObject
 		else {return "different kind of object";}
 	}
 };
-
-
 
 void SecondThread()
 {
