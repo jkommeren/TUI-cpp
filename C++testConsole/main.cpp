@@ -87,6 +87,10 @@ if (animcounter > 50)
 			
 		}
 	}
+	if (animFramerate > 55)
+	{
+		sleepamount = sleepamount + 1000;
+	}
 	
 }
 
@@ -120,28 +124,15 @@ cvWaitKey (1);
  
 CvCapture *capture = 0; 
 int captureNo = 1;
-int pos = 0;
-int posH = 0;
-int posS = 0;
-int posV = 0;
-int percHue =0;
-int percSat =0;
-int percVal =0;
-void hueChanged(int id)
-{
-	id;
-	percHue = posH;
-}
-void satChanged(int id)
-{
-	id;
-	percSat = posS;
-}
-void valChanged(int id)
-{
-	id;
-	percVal = posV;
-}
+
+int hue =0;
+int sat =0;
+int val =0;
+int maxHue =255;
+int maxSat =255;
+int maxVal =255;
+int minAreaSize = 2000;
+int maxAreaSize = 20000;
 
 void StartCapture()
 {
@@ -216,7 +207,7 @@ int counter = 0;
         	CvSeq* currentContour = cvApproxPoly(contour,sizeof(CvContour) ,storage, CV_POLY_APPROX_DP,cvArcLength(contour) * ContourAccuracy,0);
           	double contourArea = cvContourArea(currentContour);
           	
-          	if (contourArea > minAreaSize && contourArea < maxAreaSize)
+          	if (contourArea > double(minAreaSize) && contourArea < double(maxAreaSize))
           	{
           	counter ++;
           	//CvSeq* ptr = currentContour;
@@ -244,8 +235,8 @@ int counter = 0;
  int redrange = 200;
  int greenrange = 100;
  double ContourAccuracy = 0.0005;
- double minAreaSize =  2000;
- double maxAreaSize = 20000;
+ //double minAreaSize =  2000;
+ //double maxAreaSize = 20000;
  
  cvGrabFrame(capture);
  try {
@@ -262,7 +253,7 @@ frame_HSV = cvCreateImage(cvGetSize(frame),8,3);
 frame_thresh = cvCreateImage(cvGetSize(frame),8,1);
 cvCvtColor(frame, frame_HSV, CV_BGR2HSV);
 // range in HSV colors
-cvInRangeS(frame_HSV,cvScalar(percHue * 2.5,percSat * 2.5,percVal*3.5), cvScalar(255,255,350), frame_thresh);
+cvInRangeS(frame_HSV,cvScalar(hue,sat,val), cvScalar(maxHue,maxSat,maxVal), frame_thresh);
 
 std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, ContourAccuracy,  minAreaSize, maxAreaSize);
 
@@ -286,11 +277,17 @@ for (CvSeq* seq : unidentifiedObjects)
 
 if (showWindow) {
 cvShowImage("current",frame);
-cvCreateTrackbar("hue", "current", &posH, 100, hueChanged);
-cvCreateTrackbar("saturation", "current", &posS, 100, satChanged);
-cvCreateTrackbar("value", "current", &posV, 100, valChanged);
-int key = cvWaitKey(1);
+
 }
+cvCreateTrackbar("min Hue", "sliders", &hue, 255, 0);
+cvCreateTrackbar("max Hue", "sliders", &maxHue, 255, 0);
+cvCreateTrackbar("min Saturation", "sliders", &sat, 255, 0);
+cvCreateTrackbar("max Saturation", "sliders", &maxSat, 255, 0);
+cvCreateTrackbar("min Value", "sliders", &val, 255, 0);
+cvCreateTrackbar("max Value", "sliders", &maxVal, 255, 0);
+cvCreateTrackbar("min Object Size", "sliders", &minAreaSize, 2000, 0);
+cvCreateTrackbar("max Object Size", "sliders", &maxAreaSize, 50000, 0);
+int key = cvWaitKey(1);
 
 //if (counter2 > 0)
 //{
@@ -326,7 +323,7 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
 	  struct timeval tim;
 	  gettimeofday(&tim, NULL);
 	  double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
-	 
+	 cvNamedWindow("sliders"); 
  while (true)
  {
 	
