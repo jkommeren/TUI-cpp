@@ -358,8 +358,6 @@ cvRectangle(frame, cvPoint(projectionArea.x,projectionArea.y), cvPoint(projectio
 
 if (showWindow) {
 cvShowImage("current",frame);
-
-}
 cvCreateTrackbar("min Hue", "current", &hue, 255, 0);
 cvCreateTrackbar("max Hue", "current", &maxHue, 255, 0);
 cvCreateTrackbar("min Saturation", "current", &sat, 255, 0);
@@ -370,18 +368,22 @@ cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, 0);
 cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, 0);
 
 int key = cvWaitKey(10);
-//std::cout << key << std::endl;
+std::cout << key << std::endl;
 
 if (key == 99) 
 	{
 		calibrateSwitch = true;
+}
+else if (key == 119)
+{
+	showWindow = false;
 }
 
 //if (counter2 > 0)
 //{
 // //std::cout << counter2 << std::endl;
 // }
- 
+}
  
  cvReleaseImage(&frame_thresh);
   cvReleaseImage(&frame_HSV);
