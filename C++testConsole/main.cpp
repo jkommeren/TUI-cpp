@@ -104,17 +104,20 @@ int animcounter = 0;
 for (;;) {
 	if (gotAlarm) {                     /* Did we get a signal? */
                 gotAlarm = 0;
-//                animcounter ++;
-//                if (animcounter > 50)
-//{
-//	animcounter = 0;
-//	gettimeofday(&tim, NULL);
-//	double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
-//	std::cout << "animation framerate: ";
-//	double animFramerate = 50 / (curtime - lasttime);
-//	std::cout << animFramerate << std::endl;
-//	lasttime = curtime;
-//}
+                if (showWindow)
+                {
+                animcounter ++;
+                if (animcounter > 50)
+{
+	animcounter = 0;
+	gettimeofday(&tim, NULL);
+	double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
+	std::cout << "animation framerate: ";
+	double animFramerate = 50 / (curtime - lasttime);
+	std::cout << animFramerate << std::endl;
+	lasttime = curtime;
+}
+                }
                 //std::cout << "ding"<< std::endl;
 	  //displayTimes("Main: ", TRUE);
     
@@ -421,6 +424,7 @@ pthread_setschedprio(threadID, sched_priority);
 	// cvNamedWindow("current"); 
  while (true)
  {
+	 if(showWindow) {
 	
 	 if (framecounter < 30)
 	 {
@@ -435,6 +439,7 @@ pthread_setschedprio(threadID, sched_priority);
 		std::string framestring = boost::lexical_cast<std::string>(framerate);
 		std::cout << "framerate:"+framestring << std::endl;
 		lasttime = curtime;
+	 }
 	 }
 	 ProcessFrame(storage);
 	 cvClearMemStorage(storage);
