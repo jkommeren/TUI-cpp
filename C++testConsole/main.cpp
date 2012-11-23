@@ -6,7 +6,15 @@
 #include <stdio.h> 
 #include <cv.h> 
 #include <highgui.h> 
+// timer thread
 #include <sys/time.h>
+#include <signal.h>
+// priority:
+#include <sched.h>
+#include <unistd.h>
+
+
+
 class IdentifiedObject
 {
 	int _x, _y;
@@ -49,9 +57,17 @@ class IdentifiedObject
 
 
 bool showWindow = true;
+static volatile sig_atomic_t gotAlarm = 0;
+
+static void
+sigalrmHandler(int sig)
+{
+    gotAlarm = 1;
+}
+
 void SecondThread()
 {
-	sleep(10);
+sleep(1);
 bool backwards = false;
 int xfCirc = 0;
 int yfCirc = 0;
@@ -65,13 +81,31 @@ blank = cvCreateImage(cvSize(width,height),8,1);
 frameX =  cvCloneImage(blank);
 struct timeval tim;
 gettimeofday(&tim, NULL);
-int animcounter = 0;
+
+
+struct itimerval itv;
+clock_t prevClock;
+//int maxSigs;                /* Number of signals to catch before exiting */
+//int sigCnt;                 /* Number of signals so far caught */
+struct sigaction sa;
+sigemptyset(&sa.sa_mask);
+sa.sa_flags = 0;
+sa.sa_handler = sigalrmHandler;
+if (sigaction(SIGALRM, &sa, NULL) == -1) std::cout<<"oops"<<std::endl;//errExit("sigaction");
+itv.it_value.tv_sec = 2; // init time
+itv.it_value.tv_usec = 0;
+itv.it_interval.tv_sec = 0;
+itv.it_interval.tv_usec = 20000; // amount of microseconds for interval
 double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
-int sleepamount = 20000;
-while (true) {
-animcounter ++;
-usleep(sleepamount);
-if (animcounter > 50)
+
+
+if (setitimer(ITIMER_REAL, &itv, NULL) == -1) std::cout<<"oops2"<<std::endl;
+int animcounter = 0; 
+for (;;) {
+	if (gotAlarm) {                     /* Did we get a signal? */
+                gotAlarm = 0;
+                animcounter ++;
+                if (animcounter > 50)
 {
 	animcounter = 0;
 	gettimeofday(&tim, NULL);
@@ -80,21 +114,41 @@ if (animcounter > 50)
 	double animFramerate = 50 / (curtime - lasttime);
 	std::cout << animFramerate << std::endl;
 	lasttime = curtime;
-	if (animFramerate < 45)
-	{
-		if (sleepamount > 1000) sleepamount = sleepamount - 1000;
-		else {
-			if (showWindow) std::cout << "cant get to 50Hz, sorry! disabling window";
-			showWindow = false;
-			
-		}
-	}
-	if (animFramerate > 55)
-	{
-		sleepamount = sleepamount + 1000;
-	}
-	
 }
+                //std::cout << "ding"<< std::endl;
+	  //displayTimes("Main: ", TRUE);
+    
+
+
+//
+//int sleepamount = 20000;
+//while (true) {
+//animcounter ++;
+//usleep(sleepamount);
+//if (animcounter > 50)
+//{
+//	animcounter = 0;
+//	gettimeofday(&tim, NULL);
+//	double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
+//	std::cout << "animation framerate: ";
+//	double animFramerate = 50 / (curtime - lasttime);
+//	std::cout << animFramerate << std::endl;
+//	lasttime = curtime;
+//	if (animFramerate < 45)
+//	{
+//		if (sleepamount > 1000) sleepamount = sleepamount - 1000;
+//		else {
+//			if (showWindow) std::cout << "cant get to 50Hz, sorry! disabling window";
+//			showWindow = false;
+//			
+//		}
+//	}
+//	if (animFramerate > 55)
+//	{
+//		sleepamount = sleepamount + 1000;
+//	}
+//	
+//}
 
 
 
@@ -121,6 +175,7 @@ cvShowImage ("Animation", frameX);
 cvWaitKey (1);
 //cvDestroyWindow("Animation");
 
+}
 }
 }
  
@@ -349,6 +404,13 @@ unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end())
 	  }
 	  
  boost::thread t2(&SecondThread);
+ pthread_t threadID = (pthread_t) t2.native_handle();
+
+ //struct sched_param param;
+int sched_priority = 90;
+pthread_setschedprio(threadID, sched_priority);
+//pthread_attr_setschedparam(threadID,SCHED_RR, &param);
+ 
  StartCapture();
  
 	 CvMemStorage* storage = cvCreateMemStorage(0);
