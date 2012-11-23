@@ -104,17 +104,17 @@ int animcounter = 0;
 for (;;) {
 	if (gotAlarm) {                     /* Did we get a signal? */
                 gotAlarm = 0;
-                animcounter ++;
-                if (animcounter > 50)
-{
-	animcounter = 0;
-	gettimeofday(&tim, NULL);
-	double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
-	std::cout << "animation framerate: ";
-	double animFramerate = 50 / (curtime - lasttime);
-	std::cout << animFramerate << std::endl;
-	lasttime = curtime;
-}
+//                animcounter ++;
+//                if (animcounter > 50)
+//{
+//	animcounter = 0;
+//	gettimeofday(&tim, NULL);
+//	double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
+//	std::cout << "animation framerate: ";
+//	double animFramerate = 50 / (curtime - lasttime);
+//	std::cout << animFramerate << std::endl;
+//	lasttime = curtime;
+//}
                 //std::cout << "ding"<< std::endl;
 	  //displayTimes("Main: ", TRUE);
     
@@ -366,10 +366,8 @@ cvCreateTrackbar("min Value", "current", &val, 255, 0);
 cvCreateTrackbar("max Value", "current", &maxVal, 255, 0);
 cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, 0);
 cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, 0);
-
 int key = cvWaitKey(10);
-std::cout << key << std::endl;
-
+//std::cout << key << std::endl;
 if (key == 99) 
 	{
 		calibrateSwitch = true;
