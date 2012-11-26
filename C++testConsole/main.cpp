@@ -110,7 +110,7 @@ int animcounter = 0;
 for (;;) {
 	pthread_mutex_lock(&mutex);
 	if (gotAlarm) {
-	std::cout << "go!" << std::endl;
+	//std::cout << "go!" << std::endl;
                 gotAlarm = 0;
                 if (showWindow)
                 {
@@ -148,7 +148,7 @@ for (;;) {
 		cvShowImage ("Animation", frameX);
 		cvWaitKey (1);
 		//cvDestroyWindow("Animation");
-		
+		pthread_cond_wait(&cond, &mutex);
 		}
 		else {
 			std::cout << "waiting ..." << std::endl;
