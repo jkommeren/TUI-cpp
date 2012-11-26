@@ -73,7 +73,6 @@ sigalrmHandler(int sig)
 
 void SecondThread()
 {
-sleep(1);
 bool backwards = false;
 int xfCirc = 0;
 int yfCirc = 0;
@@ -120,7 +119,7 @@ for (;;) {
 						animcounter = 0;
 						gettimeofday(&tim, NULL);
 						double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
-						std::cout << "animation framerate: ";
+						//std::cout << "animation framerate: ";
 						double animFramerate = 50 / (curtime - lasttime);
 						std::cout << animFramerate << std::endl;
 						lasttime = curtime;
@@ -399,7 +398,7 @@ pthread_setschedprio(threadID, sched_priority);
 	// cvNamedWindow("current"); 
  while (true)
  {
-	 if(showWindow) {
+	// if(showWindow) {
 	
 	 if (framecounter < 30)
 	 {
@@ -415,7 +414,7 @@ pthread_setschedprio(threadID, sched_priority);
 		std::cout << "framerate:"+framestring << std::endl;
 		lasttime = curtime;
 	 }
-	 }
+	 //}
 	 ProcessFrame(storage);
 	 cvClearMemStorage(storage);
  }
