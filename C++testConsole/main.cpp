@@ -125,7 +125,7 @@ class IdentifiedObject
 		}
 		if (curTime - lastSeen < 1.0)
 		{
-			
+			std::cout << curTime-lastSeen << " " <<curTime << " last" << lastSeen << std::endl;
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
