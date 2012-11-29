@@ -67,16 +67,15 @@ class IdentifiedObject
 				if (_y - (2 * accuracy) < y && _y + (accuracy * 2) > y) {
 				_x = x;
 				_y = y;
-				std::cout << curTime << " " << curTime-lastSeen << "xxxx" << _ID << std::endl;
+				
 				lastSeen = curTime;
-				std::cout << curTime-lastSeen << "this should be 0" << std::endl;
 				_size = curSize;
 				if (!isnew) {
 					// recentlyChanged was triggered! This means we should renew the object
 					isnew = true;
 					timeRenewed = curTime;
 				}
-				std::cout << "first bit "<< lastSeen << std::endl;
+			
 				return true;
 				
 				
@@ -95,7 +94,6 @@ class IdentifiedObject
 					 _x = x;
 					 _y = y;
 					 lastSeen = curTime;
-					 std::cout<<"Iḿ hereeee" << std::endl;
 					 return true;
 				 }
 			 }
@@ -129,7 +127,7 @@ class IdentifiedObject
 		}
 		if (curTime - lastSeen < 1.0)
 		{
-			std::cout << curTime-lastSeen << " " <<curTime << " last" << lastSeen << std::endl;
+			//std::cout << curTime-lastSeen << " " <<curTime << " last" << lastSeen << std::endl;
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
@@ -572,7 +570,7 @@ for (IdentifiedObject ioZ : toRemove)
 	if (localfound) 
 	{
 		identifiedObjects.erase(identifiedObjects.begin() + i);
-		std::cout << "deleted?" << std::endl;
+		//std::cout << "deleted?" << std::endl;
 	}
 	
 }
