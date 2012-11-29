@@ -295,26 +295,70 @@ IdentifiedObject IdentifyObject (CvSeq* detectedObject,long curTime)
 	 double boundingRectArea = double(boundingRect.width * boundingRect.height);
 	CvBox2D minBox = cvMinAreaRect2(detectedObject);
 	//CvRect minBoxRect = CvRect(minBox.size);
+	
 	CvSize2D32f minBoxSquare = minBox.size;
+	double minBoxHeight = (double) minBoxSquare.height;
+	double minBoxWidth= (double) minBoxSquare.width;
+	
+	// calculate the relative difference in height and width of the item (independent of its orientation => minbox)
+	double ratio = minBoxHeight / minBoxWidth;
+	if (ratio < 1) ratio = 1 / ratio;
+	
+	// values which have worked in the past for circles vs squares, based on a couple of math assumptions
+	ratio = ratio * ratio * 1.05;
+	
+	double rectHeight = (double) boundingRect.height;
+	double rectWidth = (double) boundingRect.width;
+	
+	if (minBoxHeight <= rectHeight * ratio && minBoxHeight >= rectHeight / ratio)
+	{
+		if (minBoxWidth <= rectWidth * ratio && minBoxWidth >= rectWidth / ratio)
+		{
+			// double check with a non-powered factor to smoothen out results
+			if (minBoxWidth * 0.9 < minBoxHeight && minBoxWidth * 1.1 > minBoxHeight)
+			{
+				isCircle = true;
+			}
+			else {
+				// not square-ish  (elliptical?)
+			}
+		}
+	}
+	
 	CvRect minBoxRect = cvRect(0,0,int(minBoxSquare.width),int(minBoxSquare.height));
 	double minBoxArea = double(minBoxRect.width * minBoxRect.height);
 	CvPoint2D32f center = minBox.center;
 	int centerX = int(center.x + 0.5);
 	int centerY = int(center.y + 0.5);
 	
-	if (minBoxArea > 1.05 * boundingRectArea)
-	{
-		isSquare = true;
-	}
 	
-	else {
-		double ratio = double(minBoxSquare.height / minBoxSquare.width);
-		if (ratio > 0.95 && ratio < 1.05)
+	if (isCircle)
 	{
-		//std::cout << ratio;
-		isCircle = true;
+	double const PI = 4 * atan(1);
+	double avgRadius = (rectHeight + rectWidth) /4;
+	double expCircArea = PI * avgRadius * avgRadius;
+	double measuredArea = cvContourArea(detectedObject);
+	if (measuredArea > expCircArea * 1.02)
+	{
+		// oops I'm  a square after all, just nearly vertical
+	 	isCircle = false;
+	 	isSquare = true;
 	}
-	}
+}
+	
+//	if (minBoxArea > 1.05 * boundingRectArea)
+//	{
+//		isSquare = true;
+//	}
+//	
+//	else {
+//		double ratio = double(minBoxSquare.height / minBoxSquare.width);
+//		if (ratio > 0.95 && ratio < 1.05)
+//	{
+//		//std::cout << ratio;
+//		isCircle = true;
+//	}
+//	}
 
 	
 	IDcounter++;
@@ -463,8 +507,6 @@ if (recentlyChanged) recentlyChanged = false;
 cvRectangle(frame, cvPoint(projectionArea.x,projectionArea.y), cvPoint(projectionArea.x + projectionArea.width, projectionArea.y + projectionArea.height),cvScalar(1,255,255));
 
 // any objects that need to be removed?
-long double sysTimeX;
-long double curTimeX;
 for (IdentifiedObject io : identifiedObjects)
 {
 	//sysTimeX = time(0);
@@ -478,7 +520,7 @@ for (IdentifiedObject io : identifiedObjects)
 	  curTimeD = curTimeD * 1000;
 	  long curTime = (long)curTimeD;
 	  //std::cout << "proper time?: " << curTime << std::endl;
-	CvPoint center = io.getPosition(curTimeX);
+	CvPoint center = io.getPosition(curTime);
 	if (center.x < 0)
 	{
 		//toRemove.Add(io);
