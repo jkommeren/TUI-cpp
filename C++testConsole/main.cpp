@@ -471,7 +471,7 @@ struct timeval timX;
 	  double curTimeD = timX.tv_sec +(timX.tv_usec/1000000.0);
 	  curTimeD = curTimeD * 1000;
 	  long curTime = (long)curTimeD;
-	  //std::cout << "proper time?: " << curTime << std::endl;
+	  std::cout << "proper time?: " << curTime << std::endl;
 	for  (IdentifiedObject io : identifiedObjects)
 {
 	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTime, cvContourArea(seq)))
