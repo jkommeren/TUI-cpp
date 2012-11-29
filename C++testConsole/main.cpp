@@ -119,11 +119,11 @@ class IdentifiedObject
 	CvPoint getPosition(double curTime)
 	{
 
-		if (curTime - timeRenewed > 1000)
+		if (curTime - timeRenewed > 1.0)
 		{
 			isnew = false;
 		}
-		if (curTime - lastSeen < 1000)
+		if (curTime - lastSeen < 1.0)
 		{
 			
 			return cvPoint((float)_x, (float)_y);
@@ -469,7 +469,7 @@ for (CvSeq* seq : unidentifiedObjects)
 	  gettimeofday(&tim, NULL);
 	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
 	   
-	  curTimeD = curTimeD * 1000;
+	  //curTimeD = curTimeD * 1000;
 	 // long curTime = (long)curTimeD;
 	for  (IdentifiedObject io : identifiedObjects)
 {
@@ -516,7 +516,7 @@ for (IdentifiedObject io : identifiedObjects)
 //	std::cout << curTimeZ << std::endl;
   gettimeofday(&tim, NULL);
 	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
-	  curTimeD = curTimeD * 1000;
+	  //curTimeD = curTimeD * 1000;
 	 // long curTime = (long)curTimeD;
 	  //std::cout << "proper time?: " << curTime << std::endl;
 	CvPoint center = io.getPosition(curTimeD);
