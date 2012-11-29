@@ -67,6 +67,7 @@ class IdentifiedObject
 				if (_y - (2 * accuracy) < y && _y + (accuracy * 2) > y) {
 				_x = x;
 				_y = y;
+				std::cout << curTime << " " << lastSeen << "xxxx" << std::endl;
 				lastSeen = curTime;
 				_size = curSize;
 				if (!isnew) {
@@ -74,7 +75,7 @@ class IdentifiedObject
 					isnew = true;
 					timeRenewed = curTime;
 				}
-				std::cout << "first bit "<< std::endl;
+				std::cout << "first bit "<< lastSeen << std::endl;
 				return true;
 				
 				
