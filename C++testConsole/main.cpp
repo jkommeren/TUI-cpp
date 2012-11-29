@@ -130,7 +130,7 @@ class IdentifiedObject
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
-			
+			std::cout << "marked for deletion" << std::endl;
 			// too long ago! Object marked for removal
 			return cvPoint((float)-1,(float)-1);
 		}
