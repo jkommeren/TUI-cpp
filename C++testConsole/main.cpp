@@ -44,7 +44,7 @@ class IdentifiedObject
 		_circle = isCircle;
 		_square = isSquare;
 		_ID = ID;
-		std::cout << curTime << std::endl;
+		//std::cout << curTime << std::endl;
 		lastSeen = curTime;
 		timeRenewed = curTime;
 		isnew = true;
@@ -523,7 +523,7 @@ for (IdentifiedObject io : identifiedObjects)
 	if (center.x < 0)
 	{
 		//toRemove.Add(io);
-		std::cout << "object marked for removal" << std::endl;
+		//std::cout << "object marked for removal" << std::endl;
 			toRemove.insert(toRemove.end(),io);
 	}
 	else {
@@ -547,14 +547,14 @@ for (IdentifiedObject ioZ : toRemove)
 		{
 		
 			localfound =true;
-			std::cout << "deleting object" << std::endl; 
+			//std::cout << "deleting object" << std::endl; 
 			break;
 		}
 	}
 	if (localfound) 
 	{
 		identifiedObjects.erase(identifiedObjects.begin() + i);
-		std::cout << "deleted?" << std::endl;
+		//std::cout << "deleted?" << std::endl;
 	}
 	
 }
