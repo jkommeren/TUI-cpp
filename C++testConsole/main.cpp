@@ -120,6 +120,10 @@ class IdentifiedObject
 	
 	CvPoint getPosition(long curTime)
 	{
+		std::cout << curTime;
+		std::cout << " and lastSeen ";
+		std::cout << lastSeen << std::endl;
+		
 		if (curTime - timeRenewed > 1000)
 		{
 			isnew = false;
@@ -129,6 +133,7 @@ class IdentifiedObject
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
+			
 			// too long ago! Object marked for removal
 			return cvPoint((float)-1,(float)-1);
 		}
