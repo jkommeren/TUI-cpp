@@ -125,11 +125,11 @@ class IdentifiedObject
 		}
 		if (curTime - lastSeen < 1000)
 		{
-			std::cout << curTime << "current" << lastSeen << std::endl;
+			
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
-			std::cout << "marked for deletion" << std::endl;
+	
 			// too long ago! Object marked for removal
 			return cvPoint((float)-1,(float)-1);
 		}
@@ -210,7 +210,7 @@ for (;;) {
 						double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
 						//std::cout << "animation framerate: ";
 						double animFramerate = 50 / (curtime - lasttime);
-						std::cout << animFramerate << std::endl;
+						//std::cout << animFramerate << std::endl;
 						lasttime = curtime;
 					}
 			}
@@ -475,7 +475,7 @@ for (CvSeq* seq : unidentifiedObjects)
 {
 	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTimeD, cvContourArea(seq)))
 	{
-		std::cout << "object recognized, hello!" << std::endl;
+		//std::cout << "object recognized, hello!" << std::endl;
 		found = true;
 		break;
 	}
