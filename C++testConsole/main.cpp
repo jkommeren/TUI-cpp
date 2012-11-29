@@ -549,7 +549,7 @@ for (IdentifiedObject ioZ : toRemove)
 		{
 		
 			localfound =true;
-			std::cout << "deleting object" << std::endl; 
+			std::cout << "deleting object" << ioz.getID() << std::endl; 
 			break;
 		}
 	}
