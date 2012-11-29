@@ -67,8 +67,9 @@ class IdentifiedObject
 				if (_y - (2 * accuracy) < y && _y + (accuracy * 2) > y) {
 				_x = x;
 				_y = y;
-				std::cout << curTime << " " << lastSeen << "xxxx" << _ID << std::endl;
+				std::cout << curTime << " " << curTime-lastSeen << "xxxx" << _ID << std::endl;
 				lastSeen = curTime;
+				std::cout << curTime-lastSeen << "this should be 0" << std::endl;
 				_size = curSize;
 				if (!isnew) {
 					// recentlyChanged was triggered! This means we should renew the object
