@@ -67,7 +67,7 @@ class IdentifiedObject
 				if (_y - (2 * accuracy) < y && _y + (accuracy * 2) > y) {
 				_x = x;
 				_y = y;
-				std::cout << curTime << " " << lastSeen << "xxxx" << std::endl;
+				std::cout << curTime << " " << lastSeen << "xxxx" << _ID << std::endl;
 				lastSeen = curTime;
 				_size = curSize;
 				if (!isnew) {
@@ -132,7 +132,7 @@ class IdentifiedObject
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
-	
+			std::cout << "deleting ID " << _ID << std::endl;
 			// too long ago! Object marked for removal
 			return cvPoint((float)-1,(float)-1);
 		}
