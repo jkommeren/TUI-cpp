@@ -44,6 +44,7 @@ class IdentifiedObject
 		_circle = isCircle;
 		_square = isSquare;
 		_ID = ID;
+		std::cout << curTime << std::endl;
 		lastSeen = curTime;
 		timeRenewed = curTime;
 		isnew = true;
@@ -466,7 +467,10 @@ for (CvSeq* seq : unidentifiedObjects)
 
 	  gettimeofday(&timX, NULL);
 	  double curTimeD = timX.tv_sec +(timX.tv_usec/1000000.0);
+	   
+	   std::cout << "double time?: " << curTimeD << std::endl;
 	  curTimeD = curTimeD * 1000;
+	  std::cout << "double time multiplied?: " << curTimeD << std::endl;
 	  long curTime = (long)curTimeD;
 	  std::cout << "proper time?: " << curTime << std::endl;
 	for  (IdentifiedObject io : identifiedObjects)
