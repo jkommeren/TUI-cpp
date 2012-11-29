@@ -15,13 +15,18 @@
 #include <sched.h>
 #include <unistd.h>
 
+// easy time checker for IO
+#include <ctime>
+
 
 
 class IdentifiedObject
 {
-	int _x, _y;
-	double  _size;
-	bool _circle, _square;
+	int _x, _y, _ID;
+	double  _size, sizeAcc;
+	bool _circle, _square, isnew;
+	long lastSeen, timeRenewed;
+	CvScalar color;
 	//_border;
 	// add orientation here for Module 5
 	// add lastSeen for Module 3
@@ -34,20 +39,103 @@ class IdentifiedObject
 		_x = _y = _size = 0;
 		_circle, _square = false;
 	}
-	IdentifiedObject(const int x, const int y, const double size, bool isCircle, bool isSquare) {
+	IdentifiedObject(const int x, const int y, const double size, bool isCircle, bool isSquare, int ID, long curTime) {
+		color = cvScalar(rand() % 255, rand() % 255, rand() % 255);
 		_x = x;
 		_y = y;
 		_size = size;
 		_circle = isCircle;
 		_square = isSquare;
+		_ID = ID;
+		lastSeen = curTime;
+		timeRenewed = curTime;
+		isnew = true;
+		sizeAcc = 0.80; // used to discern objects from eachother
 		//_border = isBorder;
 	}
 	~IdentifiedObject() { }
+	
+	bool isNew()
+	{
+		return isnew;
+	}
+	
+	bool liesWithin(int x, int y, bool recentlyChanged, int accuracy, long curTime, double curSize)
+	{
+		if (recentlyChanged || isnew)
+		{
+			if (_x - (2 * accuracy) < x && _x + (accuracy * 2) > x)
+			{
+				if (_y - (2 * accuracy) < y && _y + (accuracy * 2) > y) {
+				_x = x;
+				_y = y;
+				lastSeen = curTime;
+				_size = curSize;
+				if (!isnew) {
+					// recentlyChanged was triggered! This means we should renew the object
+					isnew = true;
+					timeRenewed = curTime;
+				}
+				return true;
+				
+				
+				}
+				return false;
+			}
+			else {
+				// object not anywhere close 
+				return false;
+			}
+		}
+		else if (_x - accuracy < x && _x + accuracy > x) {
+			 if (_y - accuracy < y && _y + accuracy > y) {
+				 if (curSize > sizeAcc * _size && curSize < _size / sizeAcc)
+				 {
+					 _x = x;
+					 _y = y;
+					 lastSeen = curTime;
+					 return true;
+				 }
+			 }
+			 return false;
+		} 
+		else {
+			return false;
+		}
+	}
+	int getID()
+	{
+		return _ID;
+	}
+	
 	void updatePosition(const int x, const int y)
 	{
 		_x = x;
 		_y = y;
 	}
+	CvScalar getColor()
+	{
+		return color;
+	}
+	
+	CvPoint getPosition(long curTime)
+	{
+		if (curTime - timeRenewed > 1000)
+		{
+			isnew = false;
+		}
+		if (curTime - lastSeen < 1000)
+		{
+			return cvPoint((float)_x, (float)_y);
+		}
+		else {
+			// too long ago! Object marked for removal
+			return cvPoint((float)-1,(float)-1);
+		}
+	}
+	
+	
+	
 	std::string getShape()
 	{
 		if (_circle == true) return "circle";
@@ -162,7 +250,10 @@ int captureNo = 1;
 bool calibrateSwitch = false;
 CvRect projectionArea = cvRect(0,0,320,240);
 
+bool recentlyChanged = false;
 
+int maxPixelTravel = 20;
+int IDcounter = 0;
 int hue =0;
 int sat =0;
 int val =0;
@@ -171,6 +262,9 @@ int maxSat =255;
 int maxVal =255;
 int minAreaSize = 2000;
 int maxAreaSize = 20000;
+std::vector<IdentifiedObject> identifiedObjects;
+std::vector<IdentifiedObject> toRemove;
+
 
 void StartCapture()
 {
@@ -189,7 +283,7 @@ catch (std::exception& excpt) {
  
  }
  
-IdentifiedObject IdentifyObject (CvSeq* detectedObject)
+IdentifiedObject IdentifyObject (CvSeq* detectedObject,long curTime)
  {
 	 bool isCircle,isSquare;
 	 isCircle = isSquare = false;
@@ -221,8 +315,8 @@ IdentifiedObject IdentifyObject (CvSeq* detectedObject)
 	}
 
 	
-	
-	IdentifiedObject object = IdentifiedObject(centerX,centerY,minBoxArea,isCircle,isSquare);
+	IDcounter++;
+	IdentifiedObject object = IdentifiedObject(centerX,centerY,minBoxArea,isCircle,isSquare, IDcounter, curTime);
 	return object;
  }
  
@@ -314,24 +408,89 @@ cvInRangeS(frame_HSV,cvScalar(hue,sat,val), cvScalar(maxHue,maxSat,maxVal), fram
 std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, ContourAccuracy,  minAreaSize, maxAreaSize);
 
 int counter2 = 0;
+bool found = false;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
 for (CvSeq* seq : unidentifiedObjects)
 {
-	IdentifiedObject x = IdentifyObject(seq);
+	//
+	CvRect boundingRect = cvBoundingRect(seq);
+	double dx = 0.5 * boundingRect.width + boundingRect.x;
+	double dy = 0.5 * boundingRect.height + boundingRect.y;
+	const long double sysTime = time(0);
+	const long curTime = (long)sysTime*1000;
+	for  (IdentifiedObject io : identifiedObjects)
+{
+	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTime, cvContourArea(seq)))
+	{
+		found = true;
+		break;
+	}
 	
+}
+
+if (!found) {
+	IdentifiedObject ioX = IdentifyObject(seq,curTime);
+	 identifiedObjects.insert(identifiedObjects.end(),ioX);
+}
+
 //	std::cout << "I'm thinking object ";
 //	std::cout << counter2;
 //	std::cout << " is a " + x.getShape()<< std::endl;
-	CvScalar col; 
-	if (x.getShape() == "square")col = cvScalar(255,0,0);
-	else if (x.getShape() == "circle") col = cvScalar(0,255,0);
-	else { col = cvScalar(255,255,255);}
-	counter2++;
-	cvDrawContours(frame,seq,col,cvScalar(1,1,1 ),10);
+//	CvScalar col; 
+//	if (x.getShape() == "square")col = cvScalar(255,0,0);
+//	else if (x.getShape() == "circle") col = cvScalar(0,255,0);
+//	else { col = cvScalar(255,255,255);}
+//	counter2++;
+//	cvDrawContours(frame,seq,col,cvScalar(1,1,1 ),10);
 //delete seq;
 //seq = NULL;
 }
+if (recentlyChanged) recentlyChanged = false;
+
+
+// draw projection area
 cvRectangle(frame, cvPoint(projectionArea.x,projectionArea.y), cvPoint(projectionArea.x + projectionArea.width, projectionArea.y + projectionArea.height),cvScalar(1,255,255));
+
+// any objects that need to be removed?
+
+
+for (IdentifiedObject io : identifiedObjects)
+{
+	const long double sysTime = time(0);
+	const long curTime = (long) 1000 * sysTime;
+	CvPoint center = io.getPosition(curTime);
+	if (center.x < 0)
+	{
+		//toRemove.Add(io);
+			toRemove.insert(toRemove.end(),io);
+	}
+	else {
+		if (io.getShape() == "circle") cvCircle(frame, center, 5,io.getColor());
+		else if (io.getShape() == "square") cvCircle(frame, center, 10,io.getColor());
+		else { cvCircle(frame, center, 1,io.getColor());}
+	}
+	
+}
+
+for (IdentifiedObject ioZ : toRemove)
+{
+	//identifiedObjects.erase(iox);
+	unsigned int i = 0;
+	bool localfound = false;
+	for (i=0; i<identifiedObjects.size(); i++)
+	{
+		IdentifiedObject ioz = identifiedObjects.at(i);
+		
+		if (ioZ.getID() == ioz.getID())
+		{
+		
+			localfound =true;
+			break;
+		}
+	}
+	if (localfound) identifiedObjects.erase(identifiedObjects.begin() + i);
+	
+}
 
 if (showWindow) {
 cvShowImage("current",frame);
@@ -363,7 +522,7 @@ else if (key == 119)
  cvReleaseImage(&frame_thresh);
   cvReleaseImage(&frame_HSV);
 unidentifiedObjects.erase(unidentifiedObjects.begin(),unidentifiedObjects.end());
- 
+toRemove.erase(toRemove.begin(),toRemove.end());
   //cvDestroyWindow("current");
 }
 
