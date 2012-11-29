@@ -127,6 +127,7 @@ class IdentifiedObject
 		}
 		if (curTime - lastSeen < 1000)
 		{
+			std::cout << curTime << "current" << lastSeen << std::endl;
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
