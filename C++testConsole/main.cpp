@@ -475,7 +475,7 @@ for (CvSeq* seq : unidentifiedObjects)
 {
 	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTimeD, cvContourArea(seq)))
 	{
-		//std::cout << "object recognized, hello!" << std::endl;
+		std::cout << "object recognized, hello!" << std::endl;
 		found = true;
 		break;
 	}
