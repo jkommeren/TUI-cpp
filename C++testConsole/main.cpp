@@ -457,7 +457,7 @@ std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, Co
 int counter2 = 0;
 bool found = false;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
-
+struct timeval timX;
 for (CvSeq* seq : unidentifiedObjects)
 {
 	//
@@ -466,7 +466,7 @@ for (CvSeq* seq : unidentifiedObjects)
 	double dy = 0.5 * boundingRect.height + boundingRect.y;
 	//const long double sysTime = time(0);
 //	const long curTime = (long)sysTime*1000;
-struct timeval timX;
+
 	  gettimeofday(&timX, NULL);
 	  double curTimeD = timX.tv_sec +(timX.tv_usec/1000000.0);
 	  curTimeD = curTimeD * 1000;
