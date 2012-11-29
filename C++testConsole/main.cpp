@@ -422,6 +422,7 @@ for (CvSeq* seq : unidentifiedObjects)
 {
 	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTime, cvContourArea(seq)))
 	{
+		std::cout << "object recognized, hello!" << std::endl;
 		found = true;
 		break;
 	}
@@ -429,6 +430,7 @@ for (CvSeq* seq : unidentifiedObjects)
 }
 
 if (!found) {
+	std::cout << "new object created" << std::endl;
 	IdentifiedObject ioX = IdentifyObject(seq,curTime);
 	 identifiedObjects.insert(identifiedObjects.end(),ioX);
 }
@@ -462,6 +464,7 @@ for (IdentifiedObject io : identifiedObjects)
 	if (center.x < 0)
 	{
 		//toRemove.Add(io);
+		std::cout << "object marked for removal" << std::endl;
 			toRemove.insert(toRemove.end(),io);
 	}
 	else {
@@ -485,6 +488,7 @@ for (IdentifiedObject ioZ : toRemove)
 		{
 		
 			localfound =true;
+			std::cout << "deleting object" << std::endl; 
 			break;
 		}
 	}
