@@ -552,7 +552,11 @@ for (IdentifiedObject ioZ : toRemove)
 			break;
 		}
 	}
-	if (localfound) identifiedObjects.erase(identifiedObjects.begin() + i);
+	if (localfound) 
+	{
+		identifiedObjects.erase(identifiedObjects.begin() + i);
+		std::cout << "deleted?" << std::endl;
+	}
 	
 }
 
