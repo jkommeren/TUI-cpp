@@ -120,10 +120,7 @@ class IdentifiedObject
 	
 	CvPoint getPosition(long curTime)
 	{
-		std::cout << curTime;
-		std::cout << " and lastSeen ";
-		std::cout << lastSeen << std::endl;
-		
+
 		if (curTime - timeRenewed > 1000)
 		{
 			isnew = false;
@@ -415,14 +412,21 @@ std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, Co
 int counter2 = 0;
 bool found = false;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
+struct timeval tim;
 for (CvSeq* seq : unidentifiedObjects)
 {
 	//
 	CvRect boundingRect = cvBoundingRect(seq);
 	double dx = 0.5 * boundingRect.width + boundingRect.x;
 	double dy = 0.5 * boundingRect.height + boundingRect.y;
-	const long double sysTime = time(0);
-	const long curTime = (long)sysTime*1000;
+	//const long double sysTime = time(0);
+//	const long curTime = (long)sysTime*1000;
+
+	  gettimeofday(&tim, NULL);
+	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
+	  curTimeD = curTimeD * 1000;
+	  long curTime = (long)curTimeD;
+	  //std::cout << "proper time?: " << curTime << std::endl;
 	for  (IdentifiedObject io : identifiedObjects)
 {
 	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTime, cvContourArea(seq)))
@@ -459,13 +463,22 @@ if (recentlyChanged) recentlyChanged = false;
 cvRectangle(frame, cvPoint(projectionArea.x,projectionArea.y), cvPoint(projectionArea.x + projectionArea.width, projectionArea.y + projectionArea.height),cvScalar(1,255,255));
 
 // any objects that need to be removed?
-
-
+long double sysTimeX;
+long double curTimeX;
 for (IdentifiedObject io : identifiedObjects)
 {
-	const long double sysTime = time(0);
-	const long curTime = (long) 1000 * sysTime;
-	CvPoint center = io.getPosition(curTime);
+	//sysTimeX = time(0);
+//		std::cout << sysTimeX  << std::endl;
+//	curTimeX = (1000 * sysTimeX);
+//	long curTimeZ = (long)curTimeX;
+//	std::cout << curTimeZ << std::endl;
+
+  gettimeofday(&tim, NULL);
+	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
+	  curTimeD = curTimeD * 1000;
+	  long curTime = (long)curTimeD;
+	  //std::cout << "proper time?: " << curTime << std::endl;
+	CvPoint center = io.getPosition(curTimeX);
 	if (center.x < 0)
 	{
 		//toRemove.Add(io);
