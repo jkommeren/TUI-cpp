@@ -457,7 +457,7 @@ std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, Co
 int counter2 = 0;
 bool found = false;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
-struct timeval tim;
+
 for (CvSeq* seq : unidentifiedObjects)
 {
 	//
@@ -466,9 +466,9 @@ for (CvSeq* seq : unidentifiedObjects)
 	double dy = 0.5 * boundingRect.height + boundingRect.y;
 	//const long double sysTime = time(0);
 //	const long curTime = (long)sysTime*1000;
-
-	  gettimeofday(&tim, NULL);
-	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
+struct timeval timX;
+	  gettimeofday(&timX, NULL);
+	  double curTimeD = timX.tv_sec +(timX.tv_usec/1000000.0);
 	  curTimeD = curTimeD * 1000;
 	  long curTime = (long)curTimeD;
 	  //std::cout << "proper time?: " << curTime << std::endl;
@@ -515,9 +515,9 @@ for (IdentifiedObject io : identifiedObjects)
 //	curTimeX = (1000 * sysTimeX);
 //	long curTimeZ = (long)curTimeX;
 //	std::cout << curTimeZ << std::endl;
-
-  gettimeofday(&tim, NULL);
-	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
+struct timeval timZ;
+  gettimeofday(&timZ, NULL);
+	  double curTimeD = timZ.tv_sec +(timZ.tv_usec/1000000.0);
 	  curTimeD = curTimeD * 1000;
 	  long curTime = (long)curTimeD;
 	  //std::cout << "proper time?: " << curTime << std::endl;
