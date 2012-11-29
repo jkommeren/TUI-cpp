@@ -475,16 +475,30 @@ for (CvSeq* seq : unidentifiedObjects)
 	   
 	  //curTimeD = curTimeD * 1000;
 	 // long curTime = (long)curTimeD;
-	for  (IdentifiedObject io : identifiedObjects)
-{
-	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTimeD, cvContourArea(seq)))
+	 int i = 0;
+	 for (i=0; i<identifiedObjects.size(); i++)
 	{
-		std::cout << "object recognized, hello!" << std::endl;
-		found = true;
-		break;
+		if (identifiedObjects.at(i).liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTimeD, cvContourArea(seq)))
+		{
+		
+			found =true;
+			break;
+		}
 	}
-	
-}
+//	for  (IdentifiedObject io : identifiedObjects)
+//{
+//	
+//	// needs to update the item itself too
+//	
+//	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTimeD, cvContourArea(seq)))
+//	{
+//		
+//		std::cout << "object recognized, hello!" << std::endl;
+//		found = true;
+//		break;
+//	}
+//	
+//}
 
 if (!found) {
 	std::cout << "new object created" << std::endl;
