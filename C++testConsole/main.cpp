@@ -528,9 +528,9 @@ for (IdentifiedObject io : identifiedObjects)
 			toRemove.insert(toRemove.end(),io);
 	}
 	else {
-		if (io.getShape() == "circle") cvCircle(frame, center, 5,io.getColor());
-		else if (io.getShape() == "square") cvCircle(frame, center, 10,io.getColor());
-		else { cvCircle(frame, center, 1,io.getColor());}
+		if (io.getShape() == "circle") cvCircle(frame, center, 5,io.getColor(),5);
+		else if (io.getShape() == "square") cvCircle(frame, center, 5,io.getColor(),10);
+		else { cvCircle(frame, center, 5,io.getColor(),1);}
 	}
 	
 }
