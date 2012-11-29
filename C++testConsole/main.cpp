@@ -22,7 +22,7 @@ class IdentifiedObject
 	int _x, _y, _ID;
 	double  _size, sizeAcc;
 	bool _circle, _square, isnew;
-	long lastSeen, timeRenewed;
+	double lastSeen, timeRenewed;
 	CvScalar color;
 	//_border;
 	// add orientation here for Module 5
@@ -36,7 +36,7 @@ class IdentifiedObject
 		_x = _y = _size = 0;
 		_circle, _square = false;
 	}
-	IdentifiedObject(const int x, const int y, const double size, bool isCircle, bool isSquare, int ID, long curTime) {
+	IdentifiedObject(const int x, const int y, const double size, bool isCircle, bool isSquare, int ID, double curTime) {
 		color = cvScalar(rand() % 255, rand() % 255, rand() % 255);
 		_x = x;
 		_y = y;
@@ -58,7 +58,7 @@ class IdentifiedObject
 		return isnew;
 	}
 	
-	bool liesWithin(int x, int y, bool recentlyChanged, int accuracy, long curTime, double curSize)
+	bool liesWithin(int x, int y, bool recentlyChanged, int accuracy, double curTime, double curSize)
 	{
 		if (recentlyChanged || isnew)
 		{
@@ -116,7 +116,7 @@ class IdentifiedObject
 		return color;
 	}
 	
-	CvPoint getPosition(long curTime)
+	CvPoint getPosition(double curTime)
 	{
 
 		if (curTime - timeRenewed > 1000)
@@ -284,7 +284,7 @@ catch (std::exception& excpt) {
  
  }
  
-IdentifiedObject IdentifyObject (CvSeq* detectedObject,long curTime)
+IdentifiedObject IdentifyObject (CvSeq* detectedObject,double curTime)
  {
 	 bool isCircle,isSquare;
 	 isCircle = isSquare = false;
@@ -455,7 +455,8 @@ std::vector<CvSeq*> unidentifiedObjects= DetectObjects(storage, frame_thresh, Co
 int counter2 = 0;
 bool found = false;
 //for (seqX::iterator i = unidentifiedObjects.begin(); i != unidentifiedObjects.end(); ++i)
-struct timeval timX;
+struct timeval tim;
+
 for (CvSeq* seq : unidentifiedObjects)
 {
 	//
@@ -465,17 +466,14 @@ for (CvSeq* seq : unidentifiedObjects)
 	//const long double sysTime = time(0);
 //	const long curTime = (long)sysTime*1000;
 
-	  gettimeofday(&timX, NULL);
-	  double curTimeD = timX.tv_sec +(timX.tv_usec/1000000.0);
+	  gettimeofday(&tim, NULL);
+	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
 	   
-	   std::cout << "double time?: " << curTimeD << std::endl;
 	  curTimeD = curTimeD * 1000;
-	  std::cout << "double time multiplied?: " << curTimeD << std::endl;
-	  long curTime = (long)curTimeD;
-	  std::cout << "proper time?: " << curTime << std::endl;
+	 // long curTime = (long)curTimeD;
 	for  (IdentifiedObject io : identifiedObjects)
 {
-	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTime, cvContourArea(seq)))
+	if (io.liesWithin((int)dx,(int)dy, recentlyChanged, maxPixelTravel, curTimeD, cvContourArea(seq)))
 	{
 		std::cout << "object recognized, hello!" << std::endl;
 		found = true;
@@ -486,7 +484,7 @@ for (CvSeq* seq : unidentifiedObjects)
 
 if (!found) {
 	std::cout << "new object created" << std::endl;
-	IdentifiedObject ioX = IdentifyObject(seq,curTime);
+	IdentifiedObject ioX = IdentifyObject(seq,curTimeD);
 	 identifiedObjects.insert(identifiedObjects.end(),ioX);
 }
 
@@ -516,13 +514,12 @@ for (IdentifiedObject io : identifiedObjects)
 //	curTimeX = (1000 * sysTimeX);
 //	long curTimeZ = (long)curTimeX;
 //	std::cout << curTimeZ << std::endl;
-struct timeval timZ;
-  gettimeofday(&timZ, NULL);
-	  double curTimeD = timZ.tv_sec +(timZ.tv_usec/1000000.0);
+  gettimeofday(&tim, NULL);
+	  double curTimeD = tim.tv_sec +(tim.tv_usec/1000000.0);
 	  curTimeD = curTimeD * 1000;
-	  long curTime = (long)curTimeD;
+	 // long curTime = (long)curTimeD;
 	  //std::cout << "proper time?: " << curTime << std::endl;
-	CvPoint center = io.getPosition(curTime);
+	CvPoint center = io.getPosition(curTimeD);
 	if (center.x < 0)
 	{
 		//toRemove.Add(io);
