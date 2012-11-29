@@ -74,6 +74,7 @@ class IdentifiedObject
 					isnew = true;
 					timeRenewed = curTime;
 				}
+				std::cout << "first bit "<< std::endl;
 				return true;
 				
 				
@@ -92,6 +93,7 @@ class IdentifiedObject
 					 _x = x;
 					 _y = y;
 					 lastSeen = curTime;
+					 std::cout<<"Iḿ hereeee" << std::endl;
 					 return true;
 				 }
 			 }
@@ -547,14 +549,14 @@ for (IdentifiedObject ioZ : toRemove)
 		{
 		
 			localfound =true;
-			//std::cout << "deleting object" << std::endl; 
+			std::cout << "deleting object" << std::endl; 
 			break;
 		}
 	}
 	if (localfound) 
 	{
 		identifiedObjects.erase(identifiedObjects.begin() + i);
-		//std::cout << "deleted?" << std::endl;
+		std::cout << "deleted?" << std::endl;
 	}
 	
 }
