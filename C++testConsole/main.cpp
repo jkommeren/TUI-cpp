@@ -149,6 +149,7 @@ class IdentifiedObject
 };
 
 
+
 bool showWindow = true;
 static volatile sig_atomic_t gotAlarm = 0;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -285,6 +286,12 @@ catch (std::exception& excpt) {
  
  
  }
+ 
+void trackbarMoved (int id)
+{
+	id;
+	recentlyChanged = true;
+}
  
 IdentifiedObject IdentifyObject (CvSeq* detectedObject,double curTime)
  {
@@ -577,14 +584,14 @@ for (IdentifiedObject ioZ : toRemove)
 
 if (showWindow) {
 cvShowImage("current",frame);
-cvCreateTrackbar("min Hue", "current", &hue, 255, 0);
-cvCreateTrackbar("max Hue", "current", &maxHue, 255, 0);
-cvCreateTrackbar("min Saturation", "current", &sat, 255, 0);
-cvCreateTrackbar("max Saturation", "current", &maxSat, 255, 0);
-cvCreateTrackbar("min Value", "current", &val, 255, 0);
-cvCreateTrackbar("max Value", "current", &maxVal, 255, 0);
-cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, 0);
-cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, 0);
+cvCreateTrackbar("min Hue", "current", &hue, 255, trackbarMoved);
+cvCreateTrackbar("max Hue", "current", &maxHue, 255, trackbarMoved);
+cvCreateTrackbar("min Saturation", "current", &sat, 255, trackbarMoved);
+cvCreateTrackbar("max Saturation", "current", &maxSat, 255, trackbarMoved);
+cvCreateTrackbar("min Value", "current", &val, 255, trackbarMoved);
+cvCreateTrackbar("max Value", "current", &maxVal, 255, trackbarMoved);
+cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, trackbarMoved);
+cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, trackbarMoved);
 int key = cvWaitKey(10);
 //std::cout << key << std::endl;
 if (key == 99) 
