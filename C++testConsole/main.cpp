@@ -592,6 +592,7 @@ cvCreateTrackbar("min Value", "current", &val, 255, trackbarMoved);
 cvCreateTrackbar("max Value", "current", &maxVal, 255, trackbarMoved);
 cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, trackbarMoved);
 cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, trackbarMoved);
+cvCreateTrackbar("Max pixel travel", "current", &maxPixelTravel, 100, trackbarMoved);
 int key = cvWaitKey(10);
 //std::cout << key << std::endl;
 if (key == 99) 
