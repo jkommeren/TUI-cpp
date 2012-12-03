@@ -1,6 +1,20 @@
 #include <boost/thread/thread.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+// opengl
+
+
+#include <cstring>
+#include <cmath>
+#include <sstream>
+#include <GL/glut.h>
+#include "opencv2/core/core.hpp"
+#include "opencv2/core/opengl_interop.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
+#include "opencv2/contrib/contrib.hpp"
+
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h> 
@@ -51,7 +65,9 @@ class IdentifiedObject
 		sizeAcc = 0.80; // used to discern objects from eachother
 		//_border = isBorder;
 	}
-	~IdentifiedObject() { }
+	~IdentifiedObject() { 
+	delete &color;
+	}
 	
 	bool isNew()
 	{
@@ -162,6 +178,22 @@ sigalrmHandler(int sig)
     pthread_cond_signal(&cond);
     pthread_mutex_unlock(&mutex);
 }
+static double s_line_length = 0.5;
+
+void on_opengl(void* param)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0,1.0,0.0);
+	glBegin(GL_LINES);
+	glVertex3f(0.0, s_line_length, 0.0);
+	glVertex3f( s_line_length, 0.0, 0.0);
+	glColor3f(0.0,0.0,1.0);
+	
+	glVertex3f(0.0, -s_line_length, 0.0);
+	glVertex3f(-s_line_length, 0.0, 0.0);
+	glEnd();
+	glFlush();
+}
 
 void SecondThread()
 {
@@ -170,7 +202,7 @@ int xfCirc = 0;
 int yfCirc = 0;
 int width = 200;
 int height = 200;
-cvNamedWindow("Animation"); 
+//cvNamedWindow("Animation"); 
 IplImage* frameX;
 IplImage* blank;
 CvPoint circleCenter;
@@ -198,6 +230,9 @@ double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
 
 if (setitimer(ITIMER_REAL, &itv, NULL) == -1) std::cout<<"oops2"<<std::endl;
 int animcounter = 0; 
+cv::namedWindow("Animation",CV_WINDOW_OPENGL | CV_WINDOW_AUTOSIZE);
+cv::resizeWindow("Animation", 800, 480);
+cv::setOpenGlDrawCallback("Animation", on_opengl);
 for (;;) {
 	pthread_mutex_lock(&mutex);
 	if (gotAlarm) {
@@ -211,32 +246,35 @@ for (;;) {
 						animcounter = 0;
 						gettimeofday(&tim, NULL);
 						double curtime = tim.tv_sec +(tim.tv_usec/1000000.0);
-						//std::cout << "animation framerate: ";
+						std::cout << "animation framerate: ";
 						double animFramerate = 50 / (curtime - lasttime);
-						//std::cout << animFramerate << std::endl;
+						std::cout << animFramerate << std::endl;
 						lasttime = curtime;
 					}
 			}
-		if (!backwards) {
-		xfCirc = xfCirc + 1.0;
-		yfCirc = yfCirc + 1.0;
-		}
-		else {
-		xfCirc -= 1.0;
-		yfCirc -= 1.0;
-		}
-		if (xfCirc > 190) {
-		backwards = true;
-		frameX = cvCloneImage(blank);
-		} else if (xfCirc < 10) {
-		// reached the top!;
-		backwards = false;
-		frameX = cvCloneImage(blank);
-		}
-		
-		circleCenter = cvPoint( xfCirc, yfCirc );
-		cvCircle(frameX, circleCenter, 20,cvScalar(255));
-		cvShowImage ("Animation", frameX);
+			cv::updateWindow("Animation");
+			if (s_line_length > 1) s_line_length = 0.1;
+			else s_line_length += 0.1;
+//		if (!backwards) {
+//		xfCirc = xfCirc + 1.0;
+//		yfCirc = yfCirc + 1.0;
+//		}
+//		else {
+//		xfCirc -= 1.0;
+//		yfCirc -= 1.0;
+//		}
+//		if (xfCirc > 190) {
+//		backwards = true;
+//		frameX = cvCloneImage(blank);
+//		} else if (xfCirc < 10) {
+//		// reached the top!;
+//		backwards = false;
+//		frameX = cvCloneImage(blank);
+//		}
+//		
+//		circleCenter = cvPoint( xfCirc, yfCirc );
+//		cvCircle(frameX, circleCenter, 20,cvScalar(255));
+		//cvShowImage ("Animation", frameX);
 		cvWaitKey (1);
 		//cvDestroyWindow("Animation");
 		pthread_cond_wait(&cond, &mutex);
@@ -583,16 +621,18 @@ for (IdentifiedObject ioZ : toRemove)
 }
 
 if (showWindow) {
-cvShowImage("current",frame);
-cvCreateTrackbar("min Hue", "current", &hue, 255, trackbarMoved);
-cvCreateTrackbar("max Hue", "current", &maxHue, 255, trackbarMoved);
-cvCreateTrackbar("min Saturation", "current", &sat, 255, trackbarMoved);
-cvCreateTrackbar("max Saturation", "current", &maxSat, 255, trackbarMoved);
-cvCreateTrackbar("min Value", "current", &val, 255, trackbarMoved);
-cvCreateTrackbar("max Value", "current", &maxVal, 255, trackbarMoved);
-cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, trackbarMoved);
-cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, trackbarMoved);
-cvCreateTrackbar("Max pixel travel", "current", &maxPixelTravel, 100, trackbarMoved);
+//cvNamedWindow("current");
+//cvCreateTrackbar("min Hue", "current", &hue, 255, trackbarMoved);
+//cvCreateTrackbar("max Hue", "current", &maxHue, 255, trackbarMoved);
+//cvCreateTrackbar("min Saturation", "current", &sat, 255, trackbarMoved);
+//cvCreateTrackbar("max Saturation", "current", &maxSat, 255, trackbarMoved);
+//cvCreateTrackbar("min Value", "current", &val, 255, trackbarMoved);
+//cvCreateTrackbar("max Value", "current", &maxVal, 255, trackbarMoved);
+//cvCreateTrackbar("min Object Size", "current", &minAreaSize, 2000, trackbarMoved);
+//cvCreateTrackbar("max Object Size", "current", &maxAreaSize, 50000, trackbarMoved);
+//cvCreateTrackbar("Max pixel travel", "current", &maxPixelTravel, 100, trackbarMoved);
+
+//cvShowImage("current",frame);
 int key = cvWaitKey(10);
 //std::cout << key << std::endl;
 if (key == 99) 
