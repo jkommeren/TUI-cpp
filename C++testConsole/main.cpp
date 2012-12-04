@@ -29,6 +29,7 @@
 #include <sched.h>
 #include <unistd.h>
 
+bool showWindow = true;
 
 
 class IdentifiedObject
@@ -151,7 +152,7 @@ class IdentifiedObject
 			return cvPoint((float)_x, (float)_y);
 		}
 		else {
-			std::cout << "deleting ID " << _ID << std::endl;
+			if (showWindow) std::cout << "deleting ID " << _ID << std::endl;
 			// too long ago! Object marked for removal
 			return cvPoint((float)-1,(float)-1);
 		}
@@ -182,7 +183,6 @@ int maxAreaSize = 2500;
 std::vector<IdentifiedObject> toRemove;
 std::vector<IdentifiedObject> identifiedObjects;
 
-bool showWindow = true;
 static volatile sig_atomic_t gotAlarm = 0;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -594,7 +594,7 @@ for (CvSeq* seq : unidentifiedObjects)
 //}
 
 if (!found) {
-	std::cout << "Object added!" << std::endl;
+	if (showWindow) std::cout << "Object added!" << std::endl;
 	IdentifiedObject ioX = IdentifyObject(seq,curTimeD);
 	identifiedObjects.insert(identifiedObjects.end(),ioX);
 }
@@ -658,7 +658,7 @@ for (IdentifiedObject ioZ : toRemove)
 		{
 		
 			localfound =true;
-			std::cout << "deleting object" << ioz.getID() << std::endl; 
+			if (showWindow) std::cout << "deleting object" << ioz.getID() << std::endl; 
 			break;
 		}
 	}
