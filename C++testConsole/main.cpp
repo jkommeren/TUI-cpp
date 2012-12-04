@@ -66,7 +66,7 @@ class IdentifiedObject
 		//_border = isBorder;
 	}
 	~IdentifiedObject() { 
-	delete &color;
+//	delete &color;
 	}
 	
 	bool isNew()
@@ -136,7 +136,11 @@ class IdentifiedObject
 	
 	CvPoint getPosition(double curTime)
 	{
-
+		if (curTime == -1.0)
+		// GUI thread
+		{
+			return cvPoint((float)_x, (float)_y);
+		}
 		if (curTime - timeRenewed > 1.0)
 		{
 			isnew = false;
@@ -165,6 +169,18 @@ class IdentifiedObject
 };
 
 
+int maxPixelTravel = 20;
+int IDcounter = 0;
+int hue =0;
+int sat =90;
+int val =0;
+int maxHue =80;
+int maxSat =255;
+int maxVal =255;
+int minAreaSize = 500;
+int maxAreaSize = 2500;
+std::vector<IdentifiedObject> toRemove;
+std::vector<IdentifiedObject> identifiedObjects;
 
 bool showWindow = true;
 static volatile sig_atomic_t gotAlarm = 0;
@@ -180,19 +196,52 @@ sigalrmHandler(int sig)
 }
 static double s_line_length = 0.5;
 
+void DrawCircle(float cx, float cy, float r, int num_segments)
+{
+	float theta = 2*3.1415926 / float (num_segments);
+	float tangetial_factor = tanf(theta);
+	float radial_factor = cosf(theta);
+	float x = r;
+	float y = 0;
+	glBegin(GL_LINE_LOOP);
+		for(int ii=0; ii< num_segments; ii++)
+		{
+			glVertex2f(x+cx, y+cy);
+			float tx = -y;
+			float ty = x;
+			
+			x += tx * tangetial_factor;
+			y += ty * tangetial_factor;
+			
+			x *= radial_factor;
+			y *= radial_factor;
+		}
+	
+	glEnd();
+}
+
+
 void on_opengl(void* param)
 {
+
+	
+	const int XSize = 640, YSize = 480;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0,640,480,0,0,1);
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+glLoadIdentity();
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.0,1.0,0.0);
-	glBegin(GL_LINES);
-	glVertex3f(0.0, s_line_length, 0.0);
-	glVertex3f( s_line_length, 0.0, 0.0);
-	glColor3f(0.0,0.0,1.0);
-	
-	glVertex3f(0.0, -s_line_length, 0.0);
-	glVertex3f(-s_line_length, 0.0, 0.0);
-	glEnd();
+	for (IdentifiedObject io : identifiedObjects)
+	{
+		CvPoint point = io.getPosition(-1.0);
+	DrawCircle(point.x, point.y, 10, 20);
+	}
 	glFlush();
+
 }
 
 void SecondThread()
@@ -231,7 +280,7 @@ double lasttime = tim.tv_sec +(tim.tv_usec/1000000.0);
 if (setitimer(ITIMER_REAL, &itv, NULL) == -1) std::cout<<"oops2"<<std::endl;
 int animcounter = 0; 
 cv::namedWindow("Animation",CV_WINDOW_OPENGL | CV_WINDOW_AUTOSIZE);
-cv::resizeWindow("Animation", 800, 480);
+cv::resizeWindow("Animation", 640, 480);
 cv::setOpenGlDrawCallback("Animation", on_opengl);
 for (;;) {
 	pthread_mutex_lock(&mutex);
@@ -275,7 +324,19 @@ for (;;) {
 //		circleCenter = cvPoint( xfCirc, yfCirc );
 //		cvCircle(frameX, circleCenter, 20,cvScalar(255));
 		//cvShowImage ("Animation", frameX);
-		cvWaitKey (1);
+		int key = cvWaitKey(10);
+//std::cout << key << std::endl;
+if (key == 99) 
+	{
+		maxHue = 80;
+		sat = 90;
+		//calibrateSwitch = true;
+}
+else if (key == 119)
+{
+	showWindow = false;
+	
+}
 		//cvDestroyWindow("Animation");
 		pthread_cond_wait(&cond, &mutex);
 		}
@@ -294,18 +355,6 @@ CvRect projectionArea = cvRect(0,0,320,240);
 
 bool recentlyChanged = false;
 
-int maxPixelTravel = 20;
-int IDcounter = 0;
-int hue =0;
-int sat =0;
-int val =0;
-int maxHue =255;
-int maxSat =255;
-int maxVal =255;
-int minAreaSize = 2000;
-int maxAreaSize = 20000;
-std::vector<IdentifiedObject> identifiedObjects;
-std::vector<IdentifiedObject> toRemove;
 
 
 void StartCapture()
@@ -333,6 +382,7 @@ void trackbarMoved (int id)
  
 IdentifiedObject IdentifyObject (CvSeq* detectedObject,double curTime)
  {
+	 
 	 bool isCircle,isSquare;
 	 isCircle = isSquare = false;
 	 CvRect boundingRect = cvBoundingRect(detectedObject);
@@ -544,9 +594,9 @@ for (CvSeq* seq : unidentifiedObjects)
 //}
 
 if (!found) {
-	std::cout << "new object created" << std::endl;
+	std::cout << "Object added!" << std::endl;
 	IdentifiedObject ioX = IdentifyObject(seq,curTimeD);
-	 identifiedObjects.insert(identifiedObjects.end(),ioX);
+	identifiedObjects.insert(identifiedObjects.end(),ioX);
 }
 
 //	std::cout << "I'm thinking object ";
@@ -633,8 +683,9 @@ if (showWindow) {
 //cvCreateTrackbar("Max pixel travel", "current", &maxPixelTravel, 100, trackbarMoved);
 
 //cvShowImage("current",frame);
-int key = cvWaitKey(10);
+
 //std::cout << key << std::endl;
+int key = cvWaitKey(10);
 if (key == 99) 
 	{
 		calibrateSwitch = true;

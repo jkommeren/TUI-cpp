@@ -2,12 +2,12 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="C++testConsole/main.cpp">
     <Files>
-      <File FileName="C++testConsole/main.cpp" Line="131" Column="24" />
+      <File FileName="C++testConsole/main.cpp" Line="686" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
-          <Node name="C++testConsole" expanded="True" />
+        <State expanded="True">
+          <Node name="C++testConsole" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>
